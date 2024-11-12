@@ -1,7 +1,6 @@
 #Nome: Anna Karolyna Pereira Santos         Matrícula: 12221BCC046
 #Nome: Fernanda Ferreira de Melo            Matrícula: 12211BCC043
 
-#--------------- Exercício 1 ---------------
 #---------Exercício 1---------
 library(ggplot2) #para plotar gráfico
 library(rpart) #para fazer o modelo da árvore de decisão
