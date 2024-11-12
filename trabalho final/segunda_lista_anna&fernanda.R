@@ -7,15 +7,13 @@
 
 
 #--------------- Exercício 2 ---------------
-# Carregar o arquivo de dados
 dados <- read.csv(file = "cerebelo.csv", header = TRUE, sep = ",")
 dados
 
-# Verificar a estrutura e resumo dos dados
 str(dados)
 summary(dados)
 
-# (a) Gráfico de dispersão do peso do cerebelo (y) em relação ao peso do corpo (x)
+# (a) 
 library(ggplot2)
 
 # Gráfico sem transformação
@@ -26,7 +24,7 @@ ggplot(data = dados, aes(x = Body_g, y = Cerebellum_g)) +
        y = "Peso do Cerebelo (g)") +
   theme_minimal()
 
-# Gráfico com transformação logarítmica (log base 10)
+# Gráfico com transformação logarítmica 
 ggplot(data = dados, aes(x = Log_body, y = Log_cerebellum)) +
   geom_point(color = "red") +
   labs(title = "Log do Peso do Cerebelo em Função do Log do Peso do Corpo",
@@ -44,15 +42,15 @@ ggplot(data = dados, aes(x = Log_body, y = Log_cerebellum)) +
 #cresce de forma proporcional ao peso do corpo em uma escala logarítmica.
 
 
-# (b) Calcule o coeficiente de correlação entre as variáveis peso do cerebelo e peso do corpo
+# (b) 
 cor_cerebelo_corpo <- cor(dados$Body_g, dados$Cerebellum_g)
 print(paste("Coeficiente de correlação entre peso do corpo e peso do cerebelo:", round(cor_cerebelo_corpo, 4)))
 
-# (c) Calcule o coeficiente de correlação entre os valores logarítmicos do peso do cerebelo e do peso do corpo
+# (c) 
 cor_log_cerebelo_corpo <- cor(dados$Log_body, dados$Log_cerebellum)
 print(paste("Coeficiente de correlação entre Log(peso do corpo) e Log(peso do cerebelo):", round(cor_log_cerebelo_corpo, 4)))
 
-# (d) Comparar os resultados dos coeficientes de correlação
+# (d) 
 print("Comparação entre os coeficientes de correlação obtidos:")
 if (cor_log_cerebelo_corpo > cor_cerebelo_corpo) {
   print("A correlação entre os valores logarítmicos é mais forte, indicando uma relação potencialmente linear entre o peso do corpo e o peso do cerebelo após a transformação.")
@@ -60,7 +58,7 @@ if (cor_log_cerebelo_corpo > cor_cerebelo_corpo) {
   print("A correlação entre os valores originais é mais forte, indicando uma relação mais linear nos dados não transformados.")
 }
 
-# (e) Regressão linear utilizando os valores transformados em logaritmo
+# (e) 
 modelo <- lm(Log_cerebellum ~ Log_body, data = dados)
 summary(modelo)
 
@@ -76,7 +74,7 @@ if (summary(modelo)$coefficients[2, 4] < 0.05) {
   print("O coeficiente de Log(Peso do Corpo) não é estatisticamente significativo.")
 }
 
-# (e) Adicionar a reta de regressão ao gráfico de dispersão log-log
+# (e) 
 ggplot(data = dados, aes(x = Log_body, y = Log_cerebellum)) +
   geom_point(color = "red") +
   geom_smooth(method = "lm", color = "blue", se = FALSE) +
@@ -85,27 +83,74 @@ ggplot(data = dados, aes(x = Log_body, y = Log_cerebellum)) +
        y = "Log(Peso do Cerebelo)") +
   theme_minimal()
 
-# (f) Teste de hipótese para verificar a normalidade dos resíduos
+# (f) 
 residuos <- residuals(modelo)
 shapiro_test <- shapiro.test(residuos)
 print(shapiro_test)
 
-# Interpretação do teste de Shapiro-Wilk
+# Interpretação do teste 
 if (shapiro_test$p.value > 0.05) {
   print("Os resíduos seguem uma distribuição normal (não rejeitamos a hipótese nula).")
 } else {
   print("Os resíduos não seguem uma distribuição normal (rejeitamos a hipótese nula).")
 }
 
-# (g) Previsão do peso do cerebelo para uma espécie com 100.000 g de peso corporal
+# (g) 
 peso_corpo_pred <- 100000
 log_peso_corpo_pred <- log10(peso_corpo_pred)
 
 # Calcular a previsão em escala logarítmica
 log_peso_cerebelo_pred <- predict(modelo, newdata = data.frame(Log_body = log_peso_corpo_pred))
 
-# Converter de volta para escala original (gramas)
+# Converter de volta para escala original 
 peso_cerebelo_pred <- 10^log_peso_cerebelo_pred
 print(paste("Peso previsto do cerebelo para uma espécie com peso corporal de 100.000 g:", round(peso_cerebelo_pred, 2), "g"))
 
 #--------------- Exercício 3 ---------------
+dados <- read.csv("olive.txt")
+head(dados)
+
+# (a) 
+dados_num <- dados[, -1] 
+dados_padronizados <- scale(dados_num)
+
+# Verifica os dados padronizados
+head(dados_padronizados)
+
+# (b) 
+set.seed(123) 
+modelo_k3 <- kmeans(dados_padronizados, centers = 3)
+
+
+dados$cluster_k3 <- as.factor(modelo_k3$cluster)
+
+# Gráfico de barras 
+library(ggplot2)
+ggplot(dados, aes(x = cluster_k3, fill = region)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Distribuição dos Clusters por Região (k = 3)",
+       x = "Cluster (k = 3)", y = "Contagem") +
+  theme_minimal()
+
+# (c) 
+#Repetição para k = 4
+set.seed(123)
+modelo_k4 <- kmeans(dados_padronizados, centers = 4)
+dados$cluster_k4 <- as.factor(modelo_k4$cluster)
+
+ggplot(dados, aes(x = cluster_k4, fill = region)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Distribuição dos Clusters por Região (k = 4)",
+       x = "Cluster (k = 4)", y = "Contagem") +
+  theme_minimal()
+
+# Repetição para k = 5
+set.seed(123)
+modelo_k5 <- kmeans(dados_padronizados, centers = 5)
+dados$cluster_k5 <- as.factor(modelo_k5$cluster)
+
+ggplot(dados, aes(x = cluster_k5, fill = region)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Distribuição dos Clusters por Região (k = 5)",
+       x = "Cluster (k = 5)", y = "Contagem") +
+  theme_minimal()
