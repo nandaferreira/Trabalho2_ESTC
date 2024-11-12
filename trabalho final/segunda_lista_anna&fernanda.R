@@ -1,5 +1,5 @@
-#Nome: Anna Karolyna Pereira Santos         Matrícula: 12221BCC046
-#Nome: Fernanda Ferreira de Melo            Matrícula: 12211BCC043
+#Nome: Anna Karolyna Pereira Santos         
+#Nome: Fernanda Ferreira de Melo            
 
 #---------Exercício 1---------
 library(ggplot2) #para plotar gráfico
